@@ -16,10 +16,17 @@
     "react-scripts": "3.4.1",
     "typescript": "^3.7.5"
   },
+  "devDependencies": {
+    "@types/jest": "^24.9.1",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.3.0",
+    "typescript": "^3.7.5"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "jest",
+    "coverage": "jest --coverage",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
