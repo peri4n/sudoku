@@ -1,10 +1,12 @@
+import {isNone, isSome, none, Option, some} from "fp-ts/lib/Option";
+
 export class Cell {
 
-    private readonly value: number
+    private readonly value: Option<number>
 
     private readonly mutable: boolean
 
-    constructor(value: number, mutable: boolean = false) {
+    private constructor(value: Option<number>, mutable: boolean = false) {
         this.value = value
         this.mutable = mutable
     }
@@ -13,7 +15,27 @@ export class Cell {
         return this.mutable
     }
 
-    val(): number {
+    val(): Option<number> {
         return this.value;
+    }
+
+    static empty(): Cell {
+        return new Cell(none)
+    }
+
+    static withVal(value: number): Cell {
+        return new Cell(some(value))
+    }
+
+    static prefilled(value: number): Cell {
+        return new Cell(some(value), true)
+    }
+
+    hasVal(n: number): boolean {
+        if (isSome(this.value)) {
+            return this.value.value === n
+        } else {
+            return false;
+        }
     }
 }

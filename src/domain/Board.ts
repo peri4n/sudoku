@@ -1,8 +1,9 @@
 import {Either, left, right} from "fp-ts/lib/Either";
-import {isSome, none, Option, some} from "fp-ts/lib/Option";
+import {isSome, isNone, none, Option, some} from "fp-ts/lib/Option";
 import {BoardConstraint, ColumnConstraint, RowConstraint, SquareConstraint} from "./errors/BoardConstraint";
+import {Cell} from "./Cell";
 
-type Grid = number[][]
+type Grid = Cell[][]
 
 export class Board {
 
@@ -14,9 +15,9 @@ export class Board {
         this.grid = grid
     }
 
-    private static emptyGrid: Grid = [[], [], [], [], [], [], [], [], []]
+    private static emptyGrid: number[][] = [[], [], [], [], [], [], [], [], []]
 
-    at(row: number, col: number): number {
+    at(row: number, col: number): Cell {
         return this.grid[row][col]
     }
 
@@ -40,13 +41,13 @@ export class Board {
         }
 
         const copy = this.grid.map(c => c.slice())
-        copy[row][col] = n
+        copy[row][col] = Cell.withVal(n)
         return right(new Board(copy))
     }
 
     private checkRow(row: number, n: number): Option<number> {
         for (let i = 0; i < Board.DIM; i++) {
-            if (this.at(row, i) === n) {
+            if (this.at(row, i).hasVal(n)) {
                 return some(i)
             }
         }
@@ -55,7 +56,7 @@ export class Board {
 
     private checkColumn(col: number, n: number) {
         for (let i = 0; i < Board.DIM; i++) {
-            if (this.at(i, col) === n) {
+            if (this.at(i, col).hasVal(n)) {
                 return some(i)
             }
         }
@@ -69,7 +70,7 @@ export class Board {
                     continue
                 }
 
-                if (this.at(row + dRow, col + dColumn) === n) {
+                if (this.at(row + dRow, col + dColumn).hasVal(n)) {
                     return some([row + dRow, col + dColumn])
                 }
             }
@@ -78,17 +79,31 @@ export class Board {
     }
 
     static empty(): Board {
-        return new Board(Board.emptyGrid)
+        return Board.prefilled(Board.emptyGrid)
     }
 
     isFinished(): boolean {
         for (let i = 0; i < Board.DIM; i++) {
             for (let j = 0; j < Board.DIM; j++) {
-                if (this.at(i, j) === undefined) {
+                if (isNone(this.at(i, j).val())) {
                     return false
                 }
             }
         }
         return true;
+    }
+
+    static prefilled(numbers: number[][]) {
+        const cells: Grid = [[], [], [], [], [], [], [], [], []]
+        for (let i = 0; i < Board.DIM; i++) {
+            for (let j = 0; j < Board.DIM; j++) {
+                if (numbers[i][j] !== undefined) {
+                    cells[i][j] = Cell.prefilled(numbers[i][j])
+                } else {
+                    cells[i][j] = Cell.empty()
+                }
+            }
+        }
+        return new Board(cells);
     }
 }
