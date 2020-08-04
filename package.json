@@ -12,10 +12,13 @@
     "react-dom": "^16.13.1"
   },
   "devDependencies": {
+    "@relmify/jest-fp-ts": "^1.1.1",
     "@types/jest": "^26.0.4",
     "css-loader": "^3.6.0",
     "html-webpack-plugin": "^4.3.0",
+    "io-ts": "^2.2.9",
     "jest": "^26.1.0",
+    "jest-extended": "^0.11.5",
     "style-loader": "^1.2.1",
     "ts-jest": "^26.1.2",
     "ts-loader": "^7.0.5",
