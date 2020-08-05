@@ -1,4 +1,4 @@
-import {isNone, isSome, none, Option, some} from "fp-ts/lib/Option";
+import {isSome, none, Option, some} from "fp-ts/lib/Option";
 
 export class Cell {
 
