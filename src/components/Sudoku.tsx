@@ -2,12 +2,7 @@ import React, {FunctionComponent, useContext, useEffect} from "react";
 import {Board} from "./Board";
 import {Panel} from "./Panel";
 import {SudokuContext} from "../context/SudokuContext";
-
-const mutate = (grid: number[][], row: number, column: number, value: number): number[][] => {
-    const copy = grid.map(c => c.slice())
-    copy[row][column] = value
-    return copy
-}
+import {isRight} from "fp-ts/lib/Either";
 
 export const Sudoku: FunctionComponent = () => {
 
@@ -17,7 +12,12 @@ export const Sudoku: FunctionComponent = () => {
         const digit = Number.parseInt(e.key);
         if (!Number.isNaN(digit)) {
             const [row, column] = context.selected
-            context.setBoard(mutate(context.board, row, column, digit))
+            const board = context.board.assign(row, column, digit);
+            if (isRight(board)) {
+                context.setBoard(board.right)
+            } else {
+                console.log(board.left)
+            }
         }
     }
 

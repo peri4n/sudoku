@@ -1,17 +1,16 @@
 import React, {FunctionComponent} from "react";
-
-const emptyBoard: number[][] = [[], [], [], [], [], [], [], [], []]
+import {Board} from "../domain/Board";
 
 export const initialState: SudokuContextProps = {
-    board: emptyBoard,
+    board: Board.empty(),
     setBoard: () => {},
     selected: [-1, -1],
     setSelected: () => {}
 }
 
 interface SudokuContextProps {
-    board: number[][],
-    setBoard: (board: number[][]) => void
+    board: Board,
+    setBoard: (board: Board) => void
     selected: [number, number]
     setSelected: (coordinate: [number, number]) => void
 }
@@ -24,7 +23,7 @@ type Props = {
 
 export const SudokuProvider: FunctionComponent<Props> = ({children}: Props) => {
 
-    const [board, setBoard] = React.useState(emptyBoard)
+    const [board, setBoard] = React.useState(Board.empty())
     const [selected, setSelected] = React.useState<[number, number]>([-1, -1])
 
     return <SudokuContext.Provider value={{board, setBoard, selected, setSelected}}>

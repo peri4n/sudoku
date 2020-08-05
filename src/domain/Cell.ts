@@ -19,6 +19,14 @@ export class Cell {
         return this.value;
     }
 
+    str(): string {
+        if (isSome(this.value)) {
+            return String(this.value.value)
+        } else {
+            return ""
+        }
+    }
+
     static empty(): Cell {
         return new Cell(none)
     }

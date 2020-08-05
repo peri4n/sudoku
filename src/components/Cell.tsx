@@ -36,7 +36,7 @@ export const Cell: FunctionComponent<CellProps> = ({row, column}) => {
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             className={classNames({isSelected, hovered})}>
-            <span>{context.board[row][column]}</span>
+            <span>{context.board.at(row, column).str()}</span>
         </li>
     )
 }

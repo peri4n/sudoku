@@ -1,3 +1,3 @@
 import {Board} from "../../src/domain/Board";
 
-export exampleBoard: Board = Board.prefilled()
+// export exampleBoard: Board = Board.prefilled()

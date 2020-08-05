@@ -42,6 +42,7 @@ export class Board {
 
         const copy = this.grid.map(c => c.slice())
         copy[row][col] = Cell.withVal(n)
+
         return right(new Board(copy))
     }
 
@@ -64,14 +65,15 @@ export class Board {
     }
 
     private checkSquare(row: number, col: number, n: number): Option<[number, number]> {
+        const squareCenterRow = Math.trunc(row / 3) * 3 + 1
+        const squareCenterColumn = Math.trunc(col / 3) * 3 + 1
         for (const dRow of [-1, 0, 1]) {
-            for (const dColumn of [-1, 0, 1]) {
-                if (dRow === 0 && dColumn === 0) {
-                    continue
-                }
+            for (const dCol of [-1, 0, 1]) {
+                const checkRow = squareCenterRow + dRow
+                const checkCol = squareCenterColumn + dCol
 
-                if (this.at(row + dRow, col + dColumn).hasVal(n)) {
-                    return some([row + dRow, col + dColumn])
+                if (this.at(checkRow, checkCol).hasVal(n)) {
+                    return some([checkRow, checkCol])
                 }
             }
         }
