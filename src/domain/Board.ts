@@ -2,23 +2,23 @@ import {Either, left, right} from "fp-ts/lib/Either";
 import {isSome, isNone, none, Option, some} from "fp-ts/lib/Option";
 import {BoardConstraint, ColumnConstraint, RowConstraint, SquareConstraint} from "./errors/BoardConstraint";
 import {Cell} from "./Cell";
+import {Position} from "./Position";
+import {Map} from "immutable";
 
-type Grid = Cell[][]
+type Grid = Map<Position, Cell>;
 
 export class Board {
 
     private static readonly DIM = 9
 
-    private readonly grid: Grid;
+    private readonly grid: Grid
 
     constructor(grid: Grid) {
         this.grid = grid
     }
 
-    private static emptyGrid: number[][] = [[], [], [], [], [], [], [], [], []]
-
     at(row: number, col: number): Cell {
-        return this.grid[row][col]
+        return this.grid.get(Position.of(row, col)) || Cell.empty
     }
 
     assign(row: number, col: number, n: number): Either<BoardConstraint, Board> {
@@ -40,10 +40,10 @@ export class Board {
             return left(new SquareConstraint(checkSquare.value[0], checkSquare.value[1]))
         }
 
-        const copy = this.grid.map(c => c.slice())
-        copy[row][col] = Cell.withVal(n)
-
-        return right(new Board(copy))
+        return right(new Board(
+            this.grid.set(
+                Position.of(row, col),
+                Cell.withVal(n))))
     }
 
     private checkRow(row: number, n: number): Option<number> {
@@ -81,7 +81,7 @@ export class Board {
     }
 
     static empty(): Board {
-        return Board.prefilled(Board.emptyGrid)
+        return new Board(Map())
     }
 
     isFinished(): boolean {
@@ -93,19 +93,5 @@ export class Board {
             }
         }
         return true;
-    }
-
-    static prefilled(numbers: number[][]) {
-        const cells: Grid = [[], [], [], [], [], [], [], [], []]
-        for (let i = 0; i < Board.DIM; i++) {
-            for (let j = 0; j < Board.DIM; j++) {
-                if (numbers[i][j] !== undefined) {
-                    cells[i][j] = Cell.prefilled(numbers[i][j])
-                } else {
-                    cells[i][j] = Cell.empty()
-                }
-            }
-        }
-        return new Board(cells);
     }
 }

@@ -8,6 +8,7 @@
     "@types/react-dom": "^16.9.8",
     "classnames": "^2.2.6",
     "fp-ts": "^2.7.0",
+    "immutable": "^4.0.0-rc.12",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },

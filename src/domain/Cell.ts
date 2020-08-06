@@ -27,10 +27,6 @@ export class Cell {
         }
     }
 
-    static empty(): Cell {
-        return new Cell(none)
-    }
-
     static withVal(value: number): Cell {
         return new Cell(some(value))
     }
@@ -46,4 +42,6 @@ export class Cell {
             return false;
         }
     }
+
+    static readonly empty: Cell = new Cell(none)
 }
