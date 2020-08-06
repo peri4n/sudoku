@@ -1,5 +1,5 @@
 import React, {FunctionComponent, useContext, useState} from "react";
-import './Cell.css'
+import styles from "./Cell.module.css"
 import {SudokuContext} from "../context/SudokuContext";
 
 const classNames = require('classnames')
@@ -27,15 +27,13 @@ export const Cell: FunctionComponent<CellProps> = ({row, column}) => {
         setHovered(false)
     }
 
-    function isSelected() {
-        return context.selected === [row, column]
-    }
+    const names = hovered ? styles.hovered : ""
 
     return (
         <li onClick={handleClick}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
-            className={classNames({isSelected, hovered})}>
+            className={classNames(names, styles.cell)}>
             <span>{context.board.at(row, column).str()}</span>
         </li>
     )
