@@ -1,3 +1,7 @@
+.selected {
+    background-color: #a1ffff;
+}
+
 .hovered {
     background-color: azure;
 }
@@ -16,18 +20,23 @@
 .cell:nth-child(n):nth-child(-n+9) {
     border-top-width: 4px;
 }
+/* bottom border */
 .cell:nth-child(n+73):nth-child(-n+81) {
     border-bottom-width: 4px;
 }
+/* all vertical borders (except the first) */
 .cell:nth-child(3n) {
     border-right-width: 4px;
 }
+/* the left border */
 .cell:nth-child(9n+1) {
     border-left-width: 4px;
 }
+/* First horizontal bar */
 .cell:nth-child(n+19):nth-child(-n+27) {
     border-bottom-width: 4px;
 }
+/* First second bar */
 .cell:nth-child(n+46):nth-child(-n+54) {
     border-bottom-width: 4px;
 }

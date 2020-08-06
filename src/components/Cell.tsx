@@ -2,7 +2,8 @@ import React, {FunctionComponent, useContext, useState} from "react";
 import styles from "./Cell.module.css"
 import {SudokuContext} from "../context/SudokuContext";
 
-const classNames = require('classnames')
+const classNames = require('classnames/bind')
+const cx = classNames.bind(styles);
 
 interface CellProps {
     row: number
@@ -27,13 +28,21 @@ export const Cell: FunctionComponent<CellProps> = ({row, column}) => {
         setHovered(false)
     }
 
-    const names = hovered ? styles.hovered : ""
+    function isSelected() {
+        return context.selected[0] === row && context.selected[1] === column
+    }
+
+    const className = cx({
+        cell: true,
+        hovered,
+        selected: isSelected()
+    })
 
     return (
         <li onClick={handleClick}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
-            className={classNames(names, styles.cell)}>
+            className={className}>
             <span>{context.board.at(row, column).str()}</span>
         </li>
     )
