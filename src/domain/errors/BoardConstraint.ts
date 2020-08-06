@@ -1,35 +1,40 @@
+import {Position} from "../Position";
+
 export type BoardConstraint = RowConstraint | ColumnConstraint | SquareConstraint | PrefilledConstraint
 
 export class RowConstraint {
-    private row: number;
-    private col: number;
+    private conflict: Position;
 
-    constructor(row: number, col: number) {
-        this.row = row;
-        this.col = col;
+    constructor(conflict: Position) {
+        this.conflict = conflict;
+    }
 
+    static at(row: number, column: number) {
+        return new RowConstraint(Position.of(row, column))
     }
 }
 
 export class ColumnConstraint {
-    private row: number;
-    private col: number;
+    private conflict: Position;
 
-    constructor(row: number, col: number) {
-        this.row = row;
-        this.col = col;
+    constructor(conflict: Position) {
+        this.conflict = conflict;
+    }
 
+    static at(row: number, column: number) {
+        return new ColumnConstraint(Position.of(row, column))
     }
 }
 
 export class SquareConstraint {
-    private row: number;
-    private col: number;
+    private conflict: Position;
 
-    constructor(row: number, col: number) {
-        this.row = row;
-        this.col = col;
+    constructor(conflict: Position) {
+        this.conflict = conflict;
+    }
 
+    static at(conflict: Position) {
+        return new ColumnConstraint(conflict)
     }
 }
 

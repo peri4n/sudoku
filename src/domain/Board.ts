@@ -25,19 +25,19 @@ export class Board {
         // check row constraint
         const checkRow = this.checkRow(row, n);
         if (isSome(checkRow)) {
-            return left(new RowConstraint(row, checkRow.value))
+            return left(RowConstraint.at(row, checkRow.value))
         }
 
         // check column constraint
         const checkColumn = this.checkColumn(col, n);
         if (isSome(checkColumn)) {
-            return left(new ColumnConstraint(col, checkColumn.value))
+            return left(ColumnConstraint.at(col, checkColumn.value))
         }
 
         // check square constraint
         const checkSquare = this.checkSquare(row, col, n);
         if (isSome(checkSquare)) {
-            return left(new SquareConstraint(checkSquare.value[0], checkSquare.value[1]))
+            return left(SquareConstraint.at(checkSquare.value))
         }
 
         return right(new Board(
@@ -64,7 +64,7 @@ export class Board {
         return none
     }
 
-    private checkSquare(row: number, col: number, n: number): Option<[number, number]> {
+    private checkSquare(row: number, col: number, n: number): Option<Position> {
         const squareCenterRow = Math.trunc(row / 3) * 3 + 1
         const squareCenterColumn = Math.trunc(col / 3) * 3 + 1
         for (const dRow of [-1, 0, 1]) {
@@ -73,7 +73,7 @@ export class Board {
                 const checkCol = squareCenterColumn + dCol
 
                 if (this.at(checkRow, checkCol).hasVal(n)) {
-                    return some([checkRow, checkCol])
+                    return some(Position.of(checkRow, checkCol))
                 }
             }
         }

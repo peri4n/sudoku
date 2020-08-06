@@ -4,6 +4,7 @@ import {chain} from "fp-ts/lib/Either";
 import '@relmify/jest-fp-ts';
 import {ColumnConstraint, RowConstraint, SquareConstraint} from "../../src/domain/errors/BoardConstraint";
 import {pipe} from "fp-ts/lib/pipeable";
+import {Position} from "../../src/domain/Position";
 
 describe('Board', () => {
 
@@ -26,7 +27,7 @@ describe('Board', () => {
             Board.empty().assign(1, 1, 2),
             chain((board: Board) => board.assign(1, 2, 2))
         )
-        expect(test).toStrictEqualLeft(new RowConstraint(1, 1))
+        expect(test).toStrictEqualLeft(new RowConstraint(Position.of(1, 1)))
     })
 
     it('can assign a number in a column', () => {
@@ -44,7 +45,7 @@ describe('Board', () => {
             Board.empty().assign(1, 1, 2),
             chain((board: Board) => board.assign(2, 1, 2))
         )
-        expect(test).toStrictEqualLeft(new ColumnConstraint(1, 1))
+        expect(test).toStrictEqualLeft(new ColumnConstraint(Position.of(1, 1)))
     })
 
     it('can assign a number in a square', () => {
@@ -62,6 +63,6 @@ describe('Board', () => {
             Board.empty().assign(1, 1, 2),
             chain((board: Board) => board.assign(2, 2, 2))
         )
-        expect(test).toStrictEqualLeft(new SquareConstraint(1, 1))
+        expect(test).toStrictEqualLeft(new SquareConstraint(Position.of(1, 1)))
     })
 })
