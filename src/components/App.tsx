@@ -1,14 +1,15 @@
 import React, {FunctionComponent} from "react";
-import {SudokuProvider} from "../context/SudokuContext";
 import {Sudoku} from "./Sudoku";
+import {Provider} from "react-redux";
+import store from "../store"
 
 export const App: FunctionComponent = () => {
 
     return (
         <React.StrictMode>
-            <SudokuProvider>
+            <Provider store={store}>
                 <Sudoku/>
-            </SudokuProvider>
+            </Provider>
         </React.StrictMode>
     )
 }

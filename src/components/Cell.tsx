@@ -1,23 +1,25 @@
-import React, {FunctionComponent, useContext, useState} from "react";
+import React, {FunctionComponent, useState} from "react";
 import styles from "./Cell.module.css"
-import {SudokuContext} from "../context/SudokuContext";
+import {useDispatch} from "react-redux";
+import {selectCell} from "../store/BoardState";
+import {Position} from "../domain/Position";
 
 const classNames = require('classnames/bind')
 const cx = classNames.bind(styles);
 
 interface CellProps {
-    row: number
-    column: number
+    position: Position
+    value: string
+    isSelected: boolean
 }
 
-export const Cell: FunctionComponent<CellProps> = ({row, column}) => {
+export const Cell: FunctionComponent<CellProps> = ({position, value, isSelected}) => {
 
-    const context = useContext(SudokuContext)
-
+    const dispatch = useDispatch()
     const [hovered, setHovered] = useState(false)
 
     function handleClick() {
-        context.setSelected([row, column])
+        dispatch(selectCell(position))
     }
 
     function handleMouseEnter() {
@@ -28,14 +30,10 @@ export const Cell: FunctionComponent<CellProps> = ({row, column}) => {
         setHovered(false)
     }
 
-    function isSelected() {
-        return context.selected[0] === row && context.selected[1] === column
-    }
-
     const className = cx({
         cell: true,
         hovered,
-        selected: isSelected()
+        selected: isSelected
     })
 
     return (
@@ -43,7 +41,7 @@ export const Cell: FunctionComponent<CellProps> = ({row, column}) => {
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             className={className}>
-            <span>{context.board.at(row, column).str()}</span>
+            <span>{value}</span>
         </li>
     )
 }

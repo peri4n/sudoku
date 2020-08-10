@@ -34,7 +34,7 @@ export class SquareConstraint {
     }
 
     static at(conflict: Position) {
-        return new ColumnConstraint(conflict)
+        return new SquareConstraint(conflict)
     }
 }
 
