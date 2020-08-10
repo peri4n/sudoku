@@ -13,6 +13,8 @@ export const Board: FunctionComponent = () => {
 
     const selected = useSelector((state: BoardState) => state.selected)
 
+    const MCell = React.memo(Cell)
+
     return (
         <ul className={styles.board}>
             {range(9).map(row =>
@@ -20,7 +22,7 @@ export const Board: FunctionComponent = () => {
                     const position = Position.of(row, column)
                     const value = board.at(row, column).str()
                     const isSelected = selected.equals(position)
-                    return <Cell key={row + "" + column} position={position} value={value} isSelected={isSelected}/>
+                    return <MCell key={row + "" + column} position={position} value={value} isSelected={isSelected}/>
                 })
             )}
         </ul>)
