@@ -13,7 +13,7 @@ interface CellProps {
     isSelected: boolean
 }
 
-export const Cell: FunctionComponent<CellProps> = ({position, value, isSelected}) => {
+export const Cell: FunctionComponent<CellProps> = React.memo(({position, value, isSelected}) => {
 
     const dispatch = useDispatch()
     const [hovered, setHovered] = useState(false)
@@ -44,4 +44,4 @@ export const Cell: FunctionComponent<CellProps> = ({position, value, isSelected}
             <span>{value}</span>
         </li>
     )
-}
+})
