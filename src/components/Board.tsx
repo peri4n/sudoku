@@ -4,12 +4,16 @@ import styles from "./Board.module.css"
 import {useSelector} from "react-redux";
 import {BoardState} from "../store/BoardState";
 import {Position} from "../domain/Position";
+import {Board as B} from "../domain/Board";
 
 const range = (n: number) => Array.from({length: n}, (value, key) => key)
 
 export const Board: FunctionComponent = () => {
 
-    const board = useSelector((state: BoardState) => state.board)
+    const board = useSelector((state: BoardState) => {
+        const step = state.step
+        return state.boards.get(step, B.empty())
+    })
 
     const selected = useSelector((state: BoardState) => state.selected)
 
