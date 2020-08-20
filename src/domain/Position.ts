@@ -28,7 +28,7 @@ export class Position implements ValueObject {
     }
 
     hashCode(): number {
-        return hash(this)
+        return 31 * this.row + this.column;
     }
 
 }

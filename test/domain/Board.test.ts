@@ -65,4 +65,12 @@ describe('Board', () => {
         )
         expect(test).toStrictEqualLeft(new SquareConstraint(Position.of(1, 1)))
     })
+
+    it('can be parsed from a string', () => {
+        const board = Board.parse("003020600900305001001806400008102900700000008006708200002609500800203009005010300")
+        expect(board).toStrictEqualRight(expect.toSatisfy((board: Board) =>
+            // just some random checks
+            board.at(0, 2).hasVal(3) && board.at(0, 4).hasVal(2))
+        )
+    })
 })

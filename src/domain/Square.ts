@@ -1,6 +1,6 @@
 import {isSome, none, Option, some} from "fp-ts/lib/Option";
 
-export class Cell {
+export class Square {
 
     private readonly value: Option<number>
 
@@ -27,12 +27,12 @@ export class Cell {
         }
     }
 
-    static withVal(value: number): Cell {
-        return new Cell(some(value))
+    static withVal(value: number): Square {
+        return new Square(some(value))
     }
 
-    static prefilled(value: number): Cell {
-        return new Cell(some(value), true)
+    static prefilled(value: number): Square {
+        return new Square(some(value), true)
     }
 
     hasVal(n: number): boolean {
@@ -43,5 +43,5 @@ export class Cell {
         }
     }
 
-    static readonly empty: Cell = new Cell(none)
+    static readonly empty: Square = new Square(none)
 }

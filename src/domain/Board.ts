@@ -1,11 +1,12 @@
-import {Either, left, right} from "fp-ts/lib/Either";
+import {chain, Either, left, right} from "fp-ts/lib/Either";
 import {isSome, isNone, none, Option, some} from "fp-ts/lib/Option";
 import {BoardConstraint, ColumnConstraint, RowConstraint, SquareConstraint} from "./errors/BoardConstraint";
-import {Cell} from "./Cell";
+import {Square} from "./Square";
 import {Position} from "./Position";
 import {Map} from "immutable";
+import {pipe} from "fp-ts/lib/pipeable";
 
-type Grid = Map<Position, Cell>;
+type Grid = Map<Position, Square>;
 
 export class Board {
 
@@ -17,8 +18,8 @@ export class Board {
         this.grid = grid
     }
 
-    at(row: number, col: number): Cell {
-        return this.grid.get(Position.of(row, col)) || Cell.empty
+    at(row: number, col: number): Square {
+        return this.grid.get(Position.of(row, col)) || Square.empty
     }
 
     assign(row: number, col: number, n: number): Either<BoardConstraint, Board> {
@@ -43,22 +44,22 @@ export class Board {
         return right(new Board(
             this.grid.set(
                 Position.of(row, col),
-                Cell.withVal(n))))
+                Square.withVal(n))))
     }
 
     private checkRow(row: number, n: number): Option<number> {
-        for (let i = 0; i < Board.DIM; i++) {
-            if (this.at(row, i).hasVal(n)) {
-                return some(i)
+        for (let column = 0; column < Board.DIM; column++) {
+            if (this.at(row, column).hasVal(n)) {
+                return some(column)
             }
         }
         return none
     }
 
     private checkColumn(col: number, n: number) {
-        for (let i = 0; i < Board.DIM; i++) {
-            if (this.at(i, col).hasVal(n)) {
-                return some(i)
+        for (let row = 0; row < Board.DIM; row++) {
+            if (this.at(row, col).hasVal(n)) {
+                return some(row)
             }
         }
         return none
@@ -82,6 +83,27 @@ export class Board {
 
     static empty(): Board {
         return new Board(Map())
+    }
+
+    /**
+     * Parses Sudoku board notation
+     * @param str board representation
+     */
+    static parse(str: String): Either<BoardConstraint, Board> {
+        let result: Either<BoardConstraint, Board> = right(this.empty())
+        let i = 0
+        for (let row = 0; row < Board.DIM; row++) {
+            for (let column = 0; column < Board.DIM; column++) {
+                const squareValue = Number.parseFloat(str.charAt(i));
+                if (!Number.isNaN(squareValue) && (1 <= squareValue) && (squareValue <= 9)) {
+                    result = pipe(
+                        result,
+                        chain((board: Board) => board.assign(row, column, squareValue)))
+                }
+                i++;
+            }
+        }
+        return result
     }
 
     isFinished(): boolean {
