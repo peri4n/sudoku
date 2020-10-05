@@ -10,7 +10,7 @@ type Grid = Map<Position, Square>;
 
 export class Board {
 
-    private static readonly DIM = 9
+    public static readonly DIM = 9
 
     private readonly grid: Grid
 
@@ -92,28 +92,21 @@ export class Board {
     static parse(str: String): Either<BoardConstraint, Board> {
         let result: Either<BoardConstraint, Board> = right(this.empty())
         let i = 0
-        for (let row = 0; row < Board.DIM; row++) {
-            for (let column = 0; column < Board.DIM; column++) {
-                const squareValue = Number.parseFloat(str.charAt(i));
-                if (!Number.isNaN(squareValue) && (1 <= squareValue) && (squareValue <= 9)) {
-                    result = pipe(
-                        result,
-                        chain((board: Board) => board.assign(row, column, squareValue)))
-                }
-                i++;
+        Position.all().forEach(pos => {
+            const squareValue = Number.parseFloat(str.charAt(i));
+            if (!Number.isNaN(squareValue) && (1 <= squareValue) && (squareValue <= 9)) {
+                result = pipe(
+                    result,
+                    chain((board: Board) => board.assign(pos.row, pos.column, squareValue)))
             }
-        }
+            i++;
+        })
         return result
     }
 
     isFinished(): boolean {
-        for (let i = 0; i < Board.DIM; i++) {
-            for (let j = 0; j < Board.DIM; j++) {
-                if (isNone(this.at(i, j).val())) {
-                    return false
-                }
-            }
-        }
-        return true;
+        return Position.all()
+            .filter(pos => isNone(this.at(pos.row, pos.column).val()))
+            .isEmpty();
     }
 }
