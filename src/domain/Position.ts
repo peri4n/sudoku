@@ -14,20 +14,19 @@ export class Position implements ValueObject {
     }
 
     public static of(row: number, column: number): Position {
-        assert(0 <= row && row < Board.DIM, `Rows have to be in [0,8] but was: ${row}`)
-        assert(0 <= column && column < Board.DIM, `Columns have to be in [0,8] but was: ${column}`)
+        assert(0 <= row && row < 9, `Rows have to be in [0,8] but was: ${row}`)
+        assert(0 <= column && column < 9, `Columns have to be in [0,8] but was: ${column}`)
         return new Position(row, column)
     }
 
-    public static all(): OrderedSet<Position> {
-        return OrderedSet<Position>().withMutations(s => {
-            for (let row = 0; row < Board.DIM; row++) {
-                for (let column = 0; column < Board.DIM; column++) {
+    public static all: OrderedSet<Position> =
+        OrderedSet<Position>().withMutations(s => {
+            for (let row = 0; row < 9; row++) {
+                for (let column = 0; column < 9; column++) {
                     s.add(Position.of(row, column))
                 }
             }
         })
-    }
 
     equals(other: any): boolean {
         if (other instanceof Position) {
@@ -42,7 +41,7 @@ export class Position implements ValueObject {
         return 31 * this.row + this.column
     }
 
-    public sameRow(): Set<Position> {
+    sameRow(): Set<Position> {
         return Set<Position>().withMutations(s => {
                 for (let column = 0; column < Board.DIM; column++) {
                     if (!(column === this.column)) {
@@ -54,7 +53,7 @@ export class Position implements ValueObject {
         );
     }
 
-    public sameColumn(): Set<Position> {
+    sameColumn(): Set<Position> {
         return Set<Position>().withMutations(s => {
                 for (let row = 0; row < Board.DIM; row++) {
                     if (!(row === this.row)) {
@@ -66,7 +65,7 @@ export class Position implements ValueObject {
         );
     }
 
-    public sameSquare(): Set<Position> {
+    sameSquare(): Set<Position> {
         const squareCenterRow = Math.trunc(this.row / 3) * 3 + 1
         const squareCenterColumn = Math.trunc(this.column / 3) * 3 + 1
         return Set<Position>().withMutations(s => {
@@ -84,12 +83,16 @@ export class Position implements ValueObject {
         )
     }
 
-    public peers(): Set<Position> {
+    peers(): Set<Position> {
         return Set.union([
             this.sameRow(),
             this.sameColumn(),
             this.sameSquare()
         ])
+    }
+
+    toString(): string {
+        return `(${this.row}-${this.column})`
     }
 
 }

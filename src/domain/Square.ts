@@ -1,12 +1,12 @@
-import {isSome, none, Option, some} from "fp-ts/lib/Option";
+export type Digit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 
 export class Square {
 
-    private readonly value: Option<number>
+    public readonly value: Digit
 
-    private readonly mutable: boolean
+    public readonly mutable: boolean
 
-    private constructor(value: Option<number>, mutable: boolean = false) {
+    private constructor(value: Digit, mutable: boolean = false) {
         this.value = value
         this.mutable = mutable
     }
@@ -15,33 +15,19 @@ export class Square {
         return this.mutable
     }
 
-    val(): Option<number> {
-        return this.value;
+    static withVal(value: Digit): Square {
+        return new Square(value)
     }
 
-    str(): string {
-        if (isSome(this.value)) {
-            return String(this.value.value)
-        } else {
-            return ""
-        }
+    static prefilled(value: Digit): Square {
+        return new Square(value, true)
     }
 
-    static withVal(value: number): Square {
-        return new Square(some(value))
-    }
-
-    static prefilled(value: number): Square {
-        return new Square(some(value), true)
-    }
-
-    hasVal(n: number): boolean {
-        if (isSome(this.value)) {
-            return this.value.value === n
+    hasVal(n: Digit): boolean {
+        if (this.value) {
+            return this.value === n
         } else {
             return false;
         }
     }
-
-    static readonly empty: Square = new Square(none)
 }

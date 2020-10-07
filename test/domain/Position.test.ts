@@ -5,7 +5,7 @@ import {Board} from "../../src/domain/Board";
 describe('Position', () => {
 
     it('list all positions on the board', () => {
-        expect(Position.all().size).toEqual(81);
+        expect(Position.all.size).toEqual(81);
     })
 
     it('list all positions in the same row', () => {

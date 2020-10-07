@@ -1,7 +1,7 @@
 import {chain, Either, left, right} from "fp-ts/lib/Either";
-import {isSome, isNone, none, Option, some} from "fp-ts/lib/Option";
+import {isSome, isNone, none, Option, some, fromNullable} from "fp-ts/lib/Option";
 import {BoardConstraint, ColumnConstraint, RowConstraint, SquareConstraint} from "./errors/BoardConstraint";
-import {Square} from "./Square";
+import {Digit, Square} from "./Square";
 import {Position} from "./Position";
 import {Map} from "immutable";
 import {pipe} from "fp-ts/lib/pipeable";
@@ -18,11 +18,11 @@ export class Board {
         this.grid = grid
     }
 
-    at(row: number, col: number): Square {
-        return this.grid.get(Position.of(row, col)) || Square.empty
+    at(position: Position): Option<Square> {
+        return fromNullable(this.grid.get(position))
     }
 
-    assign(row: number, col: number, n: number): Either<BoardConstraint, Board> {
+    assign(row: number, col: number, n: Digit): Either<BoardConstraint, Board> {
         // check row constraint
         const checkRow = this.checkRow(row, n);
         if (isSome(checkRow)) {
@@ -47,25 +47,34 @@ export class Board {
                 Square.withVal(n))))
     }
 
-    private checkRow(row: number, n: number): Option<number> {
-        for (let column = 0; column < Board.DIM; column++) {
-            if (this.at(row, column).hasVal(n)) {
-                return some(column)
+    forEach(sideEffect: (p: Position, s: Square) => any): void {
+        this.grid.forEach((value, key) => sideEffect(key, value))
+    }
+
+    hasDigitAt(position: Position, value: Digit): boolean {
+        const maybeSquare = this.at(position);
+        return isSome(maybeSquare) && maybeSquare.value.hasVal(value);
+    }
+
+    private checkRow(row: number, n: Digit): Option<number> {
+        for (let col = 0; col < Board.DIM; col++) {
+            if (this.hasDigitAt(Position.of(row, col), n)) {
+                return some(col)
             }
         }
         return none
     }
 
-    private checkColumn(col: number, n: number) {
+    private checkColumn(col: number, n: Digit) {
         for (let row = 0; row < Board.DIM; row++) {
-            if (this.at(row, col).hasVal(n)) {
+            if (this.hasDigitAt(Position.of(row, col), n)) {
                 return some(row)
             }
         }
         return none
     }
 
-    private checkSquare(row: number, col: number, n: number): Option<Position> {
+    private checkSquare(row: number, col: number, n: Digit): Option<Position> {
         const squareCenterRow = Math.trunc(row / 3) * 3 + 1
         const squareCenterColumn = Math.trunc(col / 3) * 3 + 1
         for (const dRow of [-1, 0, 1]) {
@@ -73,7 +82,7 @@ export class Board {
                 const checkRow = squareCenterRow + dRow
                 const checkCol = squareCenterColumn + dCol
 
-                if (this.at(checkRow, checkCol).hasVal(n)) {
+                if (this.hasDigitAt(Position.of(checkRow, checkCol), n)) {
                     return some(Position.of(checkRow, checkCol))
                 }
             }
@@ -92,8 +101,8 @@ export class Board {
     static parse(str: String): Either<BoardConstraint, Board> {
         let result: Either<BoardConstraint, Board> = right(this.empty())
         let i = 0
-        Position.all().forEach(pos => {
-            const squareValue = Number.parseFloat(str.charAt(i));
+        Position.all.forEach(pos => {
+            const squareValue = Number.parseFloat(str.charAt(i)) as Digit
             if (!Number.isNaN(squareValue) && (1 <= squareValue) && (squareValue <= 9)) {
                 result = pipe(
                     result,
@@ -104,9 +113,22 @@ export class Board {
         return result
     }
 
+    toString(): String {
+        let res = "";
+        Position.all.forEach(pos => {
+            const square = this.at(pos);
+            if (isSome(square)) {
+                res += square.value.value
+            } else {
+                res += "."
+            }
+        })
+        return res.match(/.{9}/g)!.join('\n')
+    }
+
     isFinished(): boolean {
-        return Position.all()
-            .filter(pos => isNone(this.at(pos.row, pos.column).val()))
+        return Position.all
+            .filter(pos => isNone(this.at(pos)))
             .isEmpty();
     }
 }
