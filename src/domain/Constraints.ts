@@ -14,9 +14,11 @@ export class Constraints {
     }
 
     private static unconstrained: Constraints = new Constraints(
-        Map(
-            Position.all
-                .map(position => ([position, Set.of(1, 2, 3, 4, 5, 6, 7, 8, 9)] as [Position, Set<Digit>]))))
+        Map<Position, Set<Digit>>().withMutations(map => {
+            for (const position of Position.all()) {
+                map.set(position, Set.of(1, 2, 3, 4, 5, 6, 7, 8, 9))
+            }
+        }))
 
     static initialize(board: Board): Constraints {
         return Constraints.unconstrained.withMutations(c => {
@@ -34,14 +36,14 @@ export class Constraints {
 
     toString(): string {
         let res = ""
-        Position.all.forEach(pos => {
-            const candidates = this.constraints.get(pos)!;
+        for (const position of Position.all()) {
+            const candidates = this.constraints.get(position)!;
             if (candidates.size === 1) {
                 res += candidates.first<Digit>()!
             } else {
                 res += "X"
             }
-        })
+        }
         return res.match(/.{9}/g)!.join('\n')
     }
 

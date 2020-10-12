@@ -2,15 +2,13 @@ import {chain, Either, left, right} from "fp-ts/lib/Either";
 import {isSome, isNone, none, Option, some, fromNullable} from "fp-ts/lib/Option";
 import {BoardConstraint, ColumnConstraint, RowConstraint, SquareConstraint} from "./errors/BoardConstraint";
 import {Digit, Square} from "./Square";
-import {Position} from "./Position";
+import {Column, Position, Row} from "./Position";
 import {Map} from "immutable";
 import {pipe} from "fp-ts/lib/pipeable";
 
 type Grid = Map<Position, Square>;
 
 export class Board {
-
-    public static readonly DIM = 9
 
     private readonly grid: Grid
 
@@ -22,7 +20,7 @@ export class Board {
         return fromNullable(this.grid.get(position))
     }
 
-    at(row: number, column: number): Option<Square> {
+    at(row: Row, column: Column): Option<Square> {
         return fromNullable(this.grid.get(Position.of(row, column)))
     }
 
@@ -60,8 +58,8 @@ export class Board {
         return isSome(maybeSquare) && maybeSquare.value.hasVal(value);
     }
 
-    private checkRow(row: number, n: Digit): Option<number> {
-        for (let col = 0; col < Board.DIM; col++) {
+    private checkRow(row: Row, n: Digit): Option<Column> {
+        for (const col of Column.allValues()) {
             if (this.hasDigitAt(Position.of(row, col), n)) {
                 return some(col)
             }
@@ -69,8 +67,8 @@ export class Board {
         return none
     }
 
-    private checkColumn(col: number, n: Digit) {
-        for (let row = 0; row < Board.DIM; row++) {
+    private checkColumn(col: Column, n: Digit): Option<Row> {
+        for (const row of Row.allValues()) {
             if (this.hasDigitAt(Position.of(row, col), n)) {
                 return some(row)
             }
@@ -78,7 +76,7 @@ export class Board {
         return none
     }
 
-    private checkSquare(row: number, col: number, n: Digit): Option<Position> {
+    private checkSquare(row: Row, col: Column, n: Digit): Option<Position> {
         const squareCenterRow = Math.trunc(row / 3) * 3 + 1
         const squareCenterColumn = Math.trunc(col / 3) * 3 + 1
         for (const dRow of [-1, 0, 1]) {
@@ -105,34 +103,34 @@ export class Board {
     static parse(str: String): Either<BoardConstraint, Board> {
         let result: Either<BoardConstraint, Board> = right(this.empty())
         let i = 0
-        Position.all.forEach(pos => {
+        for (const position of Position.all()) {
             const squareValue = Number.parseFloat(str.charAt(i)) as Digit
             if (!Number.isNaN(squareValue) && (1 <= squareValue) && (squareValue <= 9)) {
                 result = pipe(
                     result,
-                    chain((board: Board) => board.assign(pos.row, pos.column, squareValue)))
+                    chain((board: Board) => board.assign(position.row, position.column, squareValue)))
             }
             i++;
-        })
+        }
         return result
     }
 
     toString(): String {
         let res = "";
-        Position.all.forEach(pos => {
-            const square = this.atPos(pos);
+        for (const position of Position.all()) {
+            const square = this.atPos(position);
             if (isSome(square)) {
                 res += square.value.value
             } else {
                 res += "."
             }
-        })
+        }
         return res.match(/.{9}/g)!.join('\n')
     }
 
     isFinished(): boolean {
-        return Position.all
+        return Array.from(Position.all())
             .filter(pos => isNone(this.atPos(pos)))
-            .isEmpty();
+            .length === 0;
     }
 }
