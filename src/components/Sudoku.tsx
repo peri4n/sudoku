@@ -1,4 +1,4 @@
-import React, {FunctionComponent, useContext, useEffect} from "react";
+import React, {FunctionComponent, useEffect} from "react";
 import {Board} from "./Board";
 import {Panel} from "./Panel";
 import {useDispatch} from "react-redux";

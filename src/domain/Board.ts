@@ -18,8 +18,12 @@ export class Board {
         this.grid = grid
     }
 
-    at(position: Position): Option<Square> {
+    atPos(position: Position): Option<Square> {
         return fromNullable(this.grid.get(position))
+    }
+
+    at(row: number, column: number): Option<Square> {
+        return fromNullable(this.grid.get(Position.of(row, column)))
     }
 
     assign(row: number, col: number, n: Digit): Either<BoardConstraint, Board> {
@@ -52,7 +56,7 @@ export class Board {
     }
 
     hasDigitAt(position: Position, value: Digit): boolean {
-        const maybeSquare = this.at(position);
+        const maybeSquare = this.atPos(position);
         return isSome(maybeSquare) && maybeSquare.value.hasVal(value);
     }
 
@@ -116,7 +120,7 @@ export class Board {
     toString(): String {
         let res = "";
         Position.all.forEach(pos => {
-            const square = this.at(pos);
+            const square = this.atPos(pos);
             if (isSome(square)) {
                 res += square.value.value
             } else {
@@ -128,7 +132,7 @@ export class Board {
 
     isFinished(): boolean {
         return Position.all
-            .filter(pos => isNone(this.at(pos)))
+            .filter(pos => isNone(this.atPos(pos)))
             .isEmpty();
     }
 }

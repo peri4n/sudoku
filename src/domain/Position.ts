@@ -1,6 +1,5 @@
 import assert from "assert";
-import {OrderedSet, Set, ValueObject} from "immutable";
-import {Board} from "./Board";
+import {Map, OrderedSet, Set, ValueObject} from "immutable";
 
 export class Position implements ValueObject {
 
@@ -28,6 +27,10 @@ export class Position implements ValueObject {
             }
         })
 
+    public static pearsOf: Map<Position, Set<Position>> =
+        Map<Position, Set<Position>>(Position.all.map(pos => [pos, pos.peers()]))
+
+
     equals(other: any): boolean {
         if (other instanceof Position) {
             const p = other as Position
@@ -43,7 +46,7 @@ export class Position implements ValueObject {
 
     sameRow(): Set<Position> {
         return Set<Position>().withMutations(s => {
-                for (let column = 0; column < Board.DIM; column++) {
+                for (let column = 0; column < 9; column++) {
                     if (!(column === this.column)) {
                         s.add(Position.of(this.row, column))
                     }
@@ -55,7 +58,7 @@ export class Position implements ValueObject {
 
     sameColumn(): Set<Position> {
         return Set<Position>().withMutations(s => {
-                for (let row = 0; row < Board.DIM; row++) {
+                for (let row = 0; row < 9; row++) {
                     if (!(row === this.row)) {
                         s.add(Position.of(row, this.column))
                     }

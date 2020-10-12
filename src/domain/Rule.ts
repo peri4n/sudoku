@@ -1,5 +1,6 @@
 import {Constraints} from "./Constraints";
 import {Digit} from "./Square";
+import {Position} from "./Position";
 
 export interface Rule {
 
@@ -16,7 +17,7 @@ export class BasicRule implements Rule {
                 if (candidates.size === 1) {
                     const solution = candidates.first<Digit>()!;
                     // remove digit in candidates of peers
-                    position.peers().forEach(pos => {
+                    Position.pearsOf.get(position)!.forEach(pos => {
                         map.update(pos, can => can.remove(solution))
                     })
                 }

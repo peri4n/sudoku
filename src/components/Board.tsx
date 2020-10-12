@@ -22,7 +22,7 @@ export const Board: FunctionComponent = () => {
             {range(9).map(row =>
                 range(9).map(column => {
                     const position = Position.of(row, column)
-                    const value = board.at(row, column).str()
+                    const value = board.atPos(row, column).str()
                     const isSelected = selected.equals(position)
                     return <Cell key={row + "" + column} position={position} value={value} isSelected={isSelected}/>
                 })

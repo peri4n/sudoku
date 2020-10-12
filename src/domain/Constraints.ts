@@ -19,11 +19,9 @@ export class Constraints {
                 .map(position => ([position, Set.of(1, 2, 3, 4, 5, 6, 7, 8, 9)] as [Position, Set<Digit>]))))
 
     static initialize(board: Board): Constraints {
-        return new Constraints(
-            Constraints.unconstrained.constraints.withMutations(c => {
-                board.forEach((position, square) => c.set(position, Set.of(square.value)))
-            })
-        )
+        return Constraints.unconstrained.withMutations(c => {
+            board.forEach((position, square) => c.set(position, Set.of(square.value)))
+        })
     }
 
     withMutations(sideEffect: (c: Const) => any): Constraints {
@@ -49,7 +47,6 @@ export class Constraints {
 
     isFinished(): boolean {
         return this.constraints
-            .filter(candidates => candidates.size === 1)
-            .size === 81
+            .count(candidates => candidates.size === 1) === 81
     }
 }
