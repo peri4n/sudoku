@@ -10,6 +10,9 @@ export class Constraints {
     private readonly constraints: Const
 
     private constructor(constraints: Const) {
+        if (constraints.find(candidates => candidates.isEmpty())) {
+            throw Error("Constraints are in invalid state. A cell has no candidates left.")
+        }
         this.constraints = constraints
     }
 
@@ -19,6 +22,24 @@ export class Constraints {
                 map.set(position, Set.of(1, 2, 3, 4, 5, 6, 7, 8, 9))
             }
         }))
+
+    solve(position: Position, solution: Digit): Constraints {
+        let tmp = this.withMutations(map => {
+            map.set(position, Set.of(solution))
+        })
+
+        for (let peer of position.peers()) {
+            tmp = tmp.remove(peer, solution)
+        }
+
+        return tmp
+    }
+
+    remove(position: Position, candidate: Digit): Constraints {
+        return this.withMutations(map => {
+            map.update(position, candidates => candidates.remove(candidate))
+        })
+    }
 
     static initialize(board: Board): Constraints {
         return Constraints.unconstrained.withMutations(c => {
