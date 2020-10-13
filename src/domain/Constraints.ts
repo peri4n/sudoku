@@ -31,7 +31,7 @@ export class Constraints {
         for (let peer of position.peers()) {
             tmp = tmp.remove(peer, solution)
         }
-
+        
         return tmp
     }
 
@@ -45,6 +45,15 @@ export class Constraints {
         return Constraints.unconstrained.withMutations(c => {
             board.forEach((position, square) => c.set(position, Set.of(square.value)))
         })
+    }
+
+    equals(other: any): boolean {
+        if (other instanceof Constraints) {
+            const p = other as Constraints
+            return p.constraints.equals(this.constraints)
+        } else {
+            return false
+        }
     }
 
     withMutations(sideEffect: (c: Const) => any): Constraints {
