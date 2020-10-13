@@ -2,6 +2,7 @@ import {Position} from "./Position";
 import {Map, Set} from "immutable";
 import {Board} from "./Board";
 import {Digit} from "./Square";
+import {Either, isLeft, left, tryCatch} from "fp-ts/lib/Either";
 
 type Const = Map<Position, Set<Digit>>
 
@@ -23,28 +24,35 @@ export class Constraints {
             }
         }))
 
-    solve(position: Position, solution: Digit): Constraints {
-        let tmp = this.withMutations(map => {
-            map.set(position, Set.of(solution))
-        })
-
-        for (let peer of position.peers()) {
-            tmp = tmp.remove(peer, solution)
-        }
-        
-        return tmp
-    }
-
-    remove(position: Position, candidate: Digit): Constraints {
-        return this.withMutations(map => {
-            map.update(position, candidates => candidates.remove(candidate))
-        })
-    }
-
     static initialize(board: Board): Constraints {
         return Constraints.unconstrained.withMutations(c => {
             board.forEach((position, square) => c.set(position, Set.of(square.value)))
         })
+    }
+
+    solve(position: Position, solution: Digit): Either<String, Constraints> {
+        let tmp = this.withMutations(map => {
+            map.set(position, Set.of(solution))
+        })
+
+        let constraints: Either<String, Constraints> = left("init")
+        for (let peer of Position.pearsOf.get(position)!) {
+            constraints = tmp.remove(peer, solution);
+            if (isLeft(constraints)) {
+                return left("")
+            } else {
+                tmp = constraints.right
+            }
+        }
+
+        return constraints
+    }
+
+    remove(position: Position, candidate: Digit): Either<String, Constraints> {
+        return tryCatch(() =>
+            this.withMutations(map => {
+                map.update(position, candidates => candidates.remove(candidate))
+            }), e => "")
     }
 
     equals(other: any): boolean {
@@ -56,12 +64,16 @@ export class Constraints {
         }
     }
 
-    withMutations(sideEffect: (c: Const) => any): Constraints {
+    private withMutations(sideEffect: (c: Const) => any): Constraints {
         return new Constraints(this.constraints.withMutations(sideEffect))
     }
 
     forEach(sideEffect: (p: Position, c: Set<Digit>) => any): any {
         this.constraints.forEach((value, key) => sideEffect(key, value))
+    }
+
+    copy(): Constraints {
+        return new Constraints(Map(this.constraints))
     }
 
     toString(): string {
@@ -79,6 +91,6 @@ export class Constraints {
 
     isFinished(): boolean {
         return this.constraints
-            .count(candidates => candidates.size === 1) === 81
+            .find( candidates => candidates.size > 1) === undefined
     }
 }
