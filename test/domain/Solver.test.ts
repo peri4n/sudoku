@@ -39,7 +39,7 @@ describe("The Sudoku solver", () => {
         }))
     })
 
-    it.skip('can solve hard problem 1', () => {
+    it('can solve hard problem 1', () => {
         const board = Board.parse('4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......')
         expect(board).toStrictEqualRight(expect.toSatisfy((board: Board) => {
             const solve = Solver.solve(board, List.of(new BasicRule))

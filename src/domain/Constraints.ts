@@ -2,7 +2,7 @@ import {Position} from "./Position";
 import {Map, Set} from "immutable";
 import {Board} from "./Board";
 import {Digit} from "./Square";
-import {Either, isLeft, left, tryCatch} from "fp-ts/lib/Either";
+import {Either, left, right, tryCatch} from "fp-ts/lib/Either";
 
 type Const = Map<Position, Set<Digit>>
 
@@ -31,21 +31,19 @@ export class Constraints {
     }
 
     solve(position: Position, solution: Digit): Either<String, Constraints> {
-        let tmp = this.withMutations(map => {
-            map.set(position, Set.of(solution))
-        })
+        const conflicts = Position.pearsOf.get(position)!
+            .find(position => {
+                const candidates = this.constraints.get(position)!
+                return candidates.size === 1 && candidates.contains(solution)
+            })
 
-        let constraints: Either<String, Constraints> = left("init")
-        for (let peer of Position.pearsOf.get(position)!) {
-            constraints = tmp.remove(peer, solution);
-            if (isLeft(constraints)) {
-                return left("")
-            } else {
-                tmp = constraints.right
-            }
+        if (conflicts) {
+            return left(`Solving position ${position} with ${solution} conflicts with position ${conflicts}`)
+        } else {
+            return right(this.withMutations(map => {
+                map.set(position, Set.of(solution))
+            }))
         }
-
-        return constraints
     }
 
     remove(position: Position, candidate: Digit): Either<String, Constraints> {
@@ -79,8 +77,7 @@ export class Constraints {
     candidates(): [Position, Set<Digit>] {
         return Array.from(this.constraints
             .filter(candidates => candidates.size > 1)
-            .sortBy(candidates => candidates.size)
-            .reverse())[0]
+            .sortBy(candidates => candidates.size))[0]
     }
 
     toString(): string {
