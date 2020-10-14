@@ -179,6 +179,13 @@ export class Position implements ValueObject {
         [Position.sBL, Position.sBM, Position.sBR]
     ]
 
+    public static pearsOf: Map<Position, Set<Position>> =
+        Map<Position, Set<Position>>().withMutations(map => {
+            for (const position of Position.all()) {
+                map.set(position, position.peers())
+            }
+        })
+
     readonly row: Row;
 
     readonly column: Column;
@@ -199,14 +206,6 @@ export class Position implements ValueObject {
             }
         }
     }
-
-    public static pearsOf: Map<Position, Set<Position>> =
-        Map<Position, Set<Position>>().withMutations(map => {
-            for (const position of Position.all()) {
-                map.set(position, position.peers())
-            }
-        })
-
 
     equals(other: any): boolean {
         if (other instanceof Position) {

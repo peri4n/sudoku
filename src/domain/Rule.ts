@@ -1,7 +1,8 @@
 import {Constraints} from "./Constraints";
 import {Digit} from "./Square";
 import {Position} from "./Position";
-import {chain, Either, isLeft, isRight, left, right} from "fp-ts/lib/Either";
+import {chain, Either, isRight, left, right} from "fp-ts/lib/Either";
+import {pipe} from "fp-ts/lib/function";
 
 export interface Rule {
 
@@ -12,15 +13,14 @@ export interface Rule {
 export class BasicRule implements Rule {
 
     evaluate(constraints: Constraints): Either<String, Constraints> {
-        let updatedConstraints: Either<String, Constraints> = right(constraints.copy())
-        constraints.forEach((position, candidates) => {
-            // if already solved
-            if (candidates.size === 1) {
-                const solution = candidates.first<Digit>()!;
-                // remove digit in candidates of peers
-                Position.pearsOf.get(position)!.forEach(pos => {
-                    updatedConstraints = chain((c: Constraints) => c.remove(pos, solution))(updatedConstraints);
-                })
+        let updatedConstraints: Either<String, Constraints> = right(constraints)
+        constraints.solved().forEach(solution => {
+            const position = solution[0]
+            const digit = solution[1]
+
+            // remove digit in candidates of peers
+            for (const peer of Position.pearsOf.get(position)!) {
+                updatedConstraints = chain((c: Constraints) => c.remove(peer, digit))(updatedConstraints);
             }
         })
 

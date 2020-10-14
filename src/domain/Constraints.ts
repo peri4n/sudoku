@@ -11,9 +11,6 @@ export class Constraints {
     private readonly constraints: Const
 
     private constructor(constraints: Const) {
-        if (constraints.find(candidates => candidates.isEmpty())) {
-            throw Error("Constraints are in invalid state. A cell has no candidates left.")
-        }
         this.constraints = constraints
     }
 
@@ -48,9 +45,15 @@ export class Constraints {
 
     remove(position: Position, candidate: Digit): Either<String, Constraints> {
         return tryCatch(() =>
-            this.withMutations(map => {
-                map.update(position, candidates => candidates.remove(candidate))
-            }), e => "")
+                new Constraints(this.constraints.update(position, candidates => {
+                    const newCandidates = candidates.remove(candidate)
+                    if (newCandidates.isEmpty()) {
+                        throw Error
+                    } else {
+                        return newCandidates
+                    }
+                }))
+            , () => `Removing ${candidate} from position ${position} leaves one cell with no candidates.`)
     }
 
     equals(other: any): boolean {
@@ -72,6 +75,12 @@ export class Constraints {
 
     copy(): Constraints {
         return new Constraints(Map(this.constraints))
+    }
+
+    solved(): Set<[Position, Digit]> {
+        return Set(this.constraints
+            .filter(candidates => candidates.size === 1)
+            .map<Digit>((candidates, pos) => candidates.first<Digit>()!))
     }
 
     candidates(): [Position, Set<Digit>] {
