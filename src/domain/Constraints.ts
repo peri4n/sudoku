@@ -76,6 +76,13 @@ export class Constraints {
         return new Constraints(Map(this.constraints))
     }
 
+    candidates(): [Position, Set<Digit>] {
+        return Array.from(this.constraints
+            .filter(candidates => candidates.size > 1)
+            .sortBy(candidates => candidates.size)
+            .reverse())[0]
+    }
+
     toString(): string {
         let res = ""
         for (const position of Position.all()) {
@@ -91,6 +98,6 @@ export class Constraints {
 
     isFinished(): boolean {
         return this.constraints
-            .find( candidates => candidates.size > 1) === undefined
+            .find(candidates => candidates.size > 1) === undefined
     }
 }

@@ -2,7 +2,7 @@ import {Board} from "./Board";
 import {List} from "immutable";
 import {Rule} from "./Rule";
 import {Constraints} from "./Constraints";
-import {Either, isRight, left, right} from "fp-ts/lib/Either";
+import {Either, isLeft, isRight, left, right} from "fp-ts/lib/Either";
 
 
 export class Solver {
@@ -23,9 +23,27 @@ export class Solver {
             })
 
             if (isRight(tmp)) {
-                return this.solveH(rules, tmp.right)
+                if (tmp.right.isFinished()) {
+                    return tmp
+                }
+
+                const [position, candidates] = tmp.right.candidates()
+
+                // try pick candidates randomly
+                for (const candidate of candidates) {
+                    const constraints1 = tmp.right.solve(position, candidate);
+                    if (isRight(constraints1)) {
+                        const solveH = this.solveH(rules, constraints1.right);
+                        if (isRight(solveH)) {
+                            return solveH
+                        }
+                    }
+                }
+
+                // no pick worked so we abort
+                return left('Dead branch')
             } else {
-                return left("Unable to solve the board")
+                return left('Dead branch')
             }
         }
     }

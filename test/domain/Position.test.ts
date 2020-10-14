@@ -8,7 +8,7 @@ describe('Position', () => {
 
     it('list all positions in the same row', () => {
         for (let row of Row.allValues()) {
-            expect(Array.from(Position.of(row, 0).sameRow())).toStrictEqual(
+            expect(Array.from(Position.of(row, 0).sameRow())).toContainAllValues(
                 [
                     Position.of(row, 1),
                     Position.of(row, 2),
@@ -25,7 +25,7 @@ describe('Position', () => {
 
     it('list all positions in the same column', () => {
         for (let col of Column.allValues()) {
-            expect(Array.from(Position.of(0, col).sameColumn())).toStrictEqual(
+            expect(Array.from(Position.of(0, col).sameColumn())).toContainAllValues(
                 [
                     Position.of(1, col),
                     Position.of(2, col),
@@ -41,7 +41,7 @@ describe('Position', () => {
     })
 
     it('list all positions in the same square', () => {
-        expect(Array.from(Position.of(0, 0).sameSquare())).toStrictEqual(
+        expect(Array.from(Position.of(0, 0).sameSquare())).toContainAllValues(
             [
                 Position.of(0, 1),
                 Position.of(0, 2),
@@ -56,7 +56,7 @@ describe('Position', () => {
     })
 
     it('list all peer positions', () => {
-        expect(Array.from(Position.of(4, 5).peers())).toStrictEqual(
+        expect(Array.from(Position.of(4, 5).peers())).toContainAllValues(
             [
                 // same row
                 Position.of(4, 0),
@@ -81,12 +81,8 @@ describe('Position', () => {
                 // same square
                 Position.of(3, 3),
                 Position.of(3, 4),
-                Position.of(3, 5),
-                Position.of(4, 3),
-                Position.of(4, 4),
                 Position.of(5, 3),
                 Position.of(5, 4),
-                Position.of(5, 5)
             ]
         )
 
