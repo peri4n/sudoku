@@ -16,7 +16,7 @@ export class Constraints {
 
     private static unconstrained: Constraints = new Constraints(
         Map<Position, Set<Digit>>().withMutations(map => {
-            for (const position of Position.all()) {
+            for (const position of Position.all) {
                 map.set(position, Set.of(1, 2, 3, 4, 5, 6, 7, 8, 9))
             }
         }))
@@ -98,7 +98,7 @@ export class Constraints {
 
     toString(): string {
         let res = ""
-        for (const position of Position.all()) {
+        for (const position of Position.all) {
             const candidates = this.constraints.get(position)!;
             if (candidates.size === 1) {
                 res += candidates.first<Digit>()!

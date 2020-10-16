@@ -3,7 +3,7 @@ import {Column, Position, Row} from "../../src/domain/Position";
 describe('Position', () => {
 
     it('list all positions on the board', () => {
-        expect(Array.from(Position.all())).toBeArrayOfSize(81);
+        expect(Array.from(Position.all)).toBeArrayOfSize(81);
     })
 
     it('list all positions in the same row', () => {

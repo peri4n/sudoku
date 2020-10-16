@@ -103,7 +103,7 @@ export class Board {
     static parse(str: String): Either<BoardConstraint, Board> {
         let result: Either<BoardConstraint, Board> = right(this.empty())
         let i = 0
-        for (const position of Position.all()) {
+        for (const position of Position.all) {
             const squareValue = Number.parseFloat(str.charAt(i)) as Digit
             if (!Number.isNaN(squareValue) && (1 <= squareValue) && (squareValue <= 9)) {
                 result = pipe(
@@ -117,7 +117,7 @@ export class Board {
 
     toString(): String {
         let res = "";
-        for (const position of Position.all()) {
+        for (const position of Position.all) {
             const square = this.atPos(position);
             if (isSome(square)) {
                 res += square.value.value
@@ -129,7 +129,7 @@ export class Board {
     }
 
     isFinished(): boolean {
-        return Array.from(Position.all())
+        return Array.from(Position.all)
             .filter(pos => isNone(this.atPos(pos)))
             .length === 0;
     }
