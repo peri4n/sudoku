@@ -15,7 +15,7 @@ describe('Constraints', function () {
     it('can detect invalid states', () => {
         const board = Board.parse("003020600900305001001806400008102900700000008006708200002609500800203009005010300")
         expect(board).toStrictEqualRight(expect.toSatisfy((board: Board) => {
-            const constraints = Constraints.initialize(board).solve(Position.of(Row.A, Column.Two), 3);
+            const constraints = Constraints.initialize(board).assign(Position.of(Row.A, Column.Two), 3);
             expect(constraints).toBeLeft()
             return true
         }))

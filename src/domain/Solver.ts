@@ -2,7 +2,7 @@ import {Board} from "./Board";
 import {List} from "immutable";
 import {Rule} from "./Rule";
 import {Constraints} from "./Constraints";
-import {Either, isLeft, isRight, left, right} from "fp-ts/lib/Either";
+import {chain, Either, isRight, left, right} from "fp-ts/lib/Either";
 
 
 export class Solver {
@@ -15,25 +15,27 @@ export class Solver {
         if (constraints.isFinished()) {
             return right(constraints)
         } else {
-            let tmp: Either<String, Constraints> = right(constraints)
-            rules.forEach(rule => {
-                if (isRight(tmp)) {
-                    tmp = rule.evaluate(tmp.right)
+            // Apply all rules
+            const constraintsAfterRules = rules.reduce((constraint, rule) => {
+                return chain((c: Constraints) => rule.evaluate(c))(constraint)
+            }, right<String, Constraints>(constraints))
+
+            // If constraints are still valid
+            if (isRight(constraintsAfterRules)) {
+
+                // check if all constraints are solved
+                if (constraintsAfterRules.right.isFinished()) {
+                    return constraintsAfterRules
                 }
-            })
 
-            if (isRight(tmp)) {
-                if (tmp.right.isFinished()) {
-                    return tmp
-                }
+                //
+                const [position, candidates] = constraintsAfterRules.right.candidates()
 
-                const [position, candidates] = tmp.right.candidates()
-
-                // try pick candidates randomly
+                // guess randomly
                 for (const candidate of candidates) {
-                    const constraints1 = tmp.right.solve(position, candidate);
-                    if (isRight(constraints1)) {
-                        const solveH = this.solveH(rules, constraints1.right);
+                    const guess = constraintsAfterRules.right.assign(position, candidate);
+                    if (isRight(guess)) {
+                        const solveH = this.solveH(rules, guess.right);
                         if (isRight(solveH)) {
                             return solveH
                         }

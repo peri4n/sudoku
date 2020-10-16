@@ -1,4 +1,4 @@
-import {Map, Set, ValueObject} from "immutable";
+import {List, Map, Set, ValueObject} from "immutable";
 
 export enum Row {
     A, B, C, D, E, F, G, H, I
@@ -143,7 +143,7 @@ export class Position implements ValueObject {
     private static readonly row8 = Set.of(Position.h1, Position.h2, Position.h3, Position.h4, Position.h5, Position.h6, Position.h7, Position.h8, Position.h9)
     private static readonly row9 = Set.of(Position.i1, Position.i2, Position.i3, Position.i4, Position.i5, Position.i6, Position.i7, Position.i8, Position.i9)
 
-    private static readonly rows = [Position.row1, Position.row2, Position.row3, Position.row4, Position.row5, Position.row6, Position.row7, Position.row8, Position.row9]
+    public static readonly rows = List.of(Position.row1, Position.row2, Position.row3, Position.row4, Position.row5, Position.row6, Position.row7, Position.row8, Position.row9)
 
     /** All columns */
     private static readonly col1 = Set.of(Position.a1, Position.b1, Position.c1, Position.d1, Position.e1, Position.f1, Position.g1, Position.h1, Position.i1)
@@ -158,9 +158,9 @@ export class Position implements ValueObject {
     private static readonly col8 = Set.of(Position.a8, Position.b8, Position.c8, Position.d8, Position.e8, Position.f8, Position.g8, Position.h8, Position.i8)
     private static readonly col9 = Set.of(Position.a9, Position.b9, Position.c9, Position.d9, Position.e9, Position.f9, Position.g9, Position.h9, Position.i9)
 
-    private static readonly cols = [Position.col1, Position.col2, Position.col3, Position.col4, Position.col5, Position.col6, Position.col7, Position.col8, Position.col9]
+    public static readonly cols = List.of(Position.col1, Position.col2, Position.col3, Position.col4, Position.col5, Position.col6, Position.col7, Position.col8, Position.col9)
 
-    /** All square */
+    /** All squares */
     private static readonly sTL = Set.of(Position.a1, Position.a2, Position.a3, Position.b1, Position.b2, Position.b3, Position.c1, Position.c2, Position.c3)
     private static readonly sTM = Set.of(Position.a4, Position.a5, Position.a6, Position.b4, Position.b5, Position.b6, Position.c4, Position.c5, Position.c6)
     private static readonly sTR = Set.of(Position.a7, Position.a8, Position.a9, Position.b7, Position.b8, Position.b9, Position.c7, Position.c8, Position.c9)
@@ -173,7 +173,9 @@ export class Position implements ValueObject {
     private static readonly sBM = Set.of(Position.g4, Position.g5, Position.g6, Position.h4, Position.h5, Position.h6, Position.i4, Position.i5, Position.i6)
     private static readonly sBR = Set.of(Position.g7, Position.g8, Position.g9, Position.h7, Position.h8, Position.h9, Position.i7, Position.i8, Position.i9)
 
-    private static readonly squares = [
+    public static readonly squares = Set.of(Position.sTL, Position.sTM, Position.sTR, Position.sML, Position.sMM, Position.sMR, Position.sBL, Position.sBM, Position.sBR)
+
+    private static readonly squaresHelper = [
         [Position.sTL, Position.sTM, Position.sTR],
         [Position.sML, Position.sMM, Position.sMR],
         [Position.sBL, Position.sBM, Position.sBR]
@@ -222,17 +224,17 @@ export class Position implements ValueObject {
 
     sameRow(include: boolean = false): Set<Position> {
         if (include) {
-            return Position.rows[this.row]
+            return Position.rows.get(this.row)!
         } else {
-            return Position.rows[this.row].remove(this)
+            return Position.rows.get(this.row)!.remove(this)
         }
     }
 
     sameColumn(include: boolean = false): Set<Position> {
         if (include) {
-            return Position.cols[this.column]
+            return Position.cols.get(this.column)!
         } else {
-            return Position.cols[this.column].remove(this)
+            return Position.cols.get(this.column)!.remove(this)
         }
     }
 
@@ -240,9 +242,9 @@ export class Position implements ValueObject {
         const rowIndex = Math.trunc(this.row / 3)
         const colIndex = Math.trunc(this.column / 3)
         if (include) {
-            return Position.squares[rowIndex][colIndex]
+            return Position.squaresHelper[rowIndex][colIndex]
         } else {
-            return Position.squares[rowIndex][colIndex].remove(this)
+            return Position.squaresHelper[rowIndex][colIndex].remove(this)
         }
     }
 

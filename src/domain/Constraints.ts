@@ -27,7 +27,7 @@ export class Constraints {
         })
     }
 
-    solve(position: Position, solution: Digit): Either<String, Constraints> {
+    assign(position: Position, solution: Digit): Either<String, Constraints> {
         const conflicts = Position.pearsOf.get(position)!
             .find(position => {
                 const candidates = this.constraints.get(position)!
@@ -56,6 +56,21 @@ export class Constraints {
             , () => `Removing ${candidate} from position ${position} leaves one cell with no candidates.`)
     }
 
+    reverseIndex(positions: Set<Position>): Map<Digit, Set<Position>> {
+        return Map<Digit, Set<Position>>().withMutations(map => {
+            positions.forEach(position => {
+                const candidates = this.constraints.get(position)!;
+                candidates.forEach(candidate => {
+                    if (map.get(candidate) === undefined) {
+                        map.set(candidate, Set.of(position))
+                    } else {
+                        map.set(candidate, map.get(candidate)!.update(positions => positions.add(position)))
+                    }
+                })
+            })
+        })
+    }
+
     equals(other: any): boolean {
         if (other instanceof Constraints) {
             const p = other as Constraints
@@ -69,18 +84,10 @@ export class Constraints {
         return new Constraints(this.constraints.withMutations(sideEffect))
     }
 
-    forEach(sideEffect: (p: Position, c: Set<Digit>) => any): any {
-        this.constraints.forEach((value, key) => sideEffect(key, value))
-    }
-
-    copy(): Constraints {
-        return new Constraints(Map(this.constraints))
-    }
-
     solved(): Set<[Position, Digit]> {
         return Set(this.constraints
             .filter(candidates => candidates.size === 1)
-            .map<Digit>((candidates, pos) => candidates.first<Digit>()!))
+            .map<Digit>((candidates) => candidates.first<Digit>()!))
     }
 
     candidates(): [Position, Set<Digit>] {
