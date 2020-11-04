@@ -1,4 +1,4 @@
-import {Map, ValueObject} from "immutable";
+import {Map} from "immutable";
 
 export enum Row {
     A, B, C, D, E, F, G, H, I
@@ -38,7 +38,7 @@ export module Column {
 
 }
 
-export class Position implements ValueObject {
+export class Position {
 
     private static readonly a1 = Position.of(Row.A, Column.One)
     private static readonly a2 = Position.of(Row.A, Column.Two)
@@ -194,12 +194,25 @@ export class Position implements ValueObject {
             Position.row9
         )
 
-    public static pearsOf: Map<Position, Position[]> =
-        Map<Position, Position[]>().withMutations(map => {
-            for (const position of Position.all) {
-                map.set(position, position.peers())
-            }
-        })
+    private static peersCache: Position[][] = Position.memoPears()
+
+    public static peersOf(pos: Position): Position[] {
+        return Position.peersCache[pos.toIndex()]
+    }
+
+    private static memoPears(): Position[][] {
+        return Position.all.map( position => position.peers())
+    }
+
+    public static toIndex(pos: Position): number {
+        return pos.row  * 9 + pos.column
+    }
+
+    public static fromIndex(index: number): Position {
+        const col = index % 9
+        const row = (index / 9) >> 0
+        return Position.of(row, col)
+    }
 
     readonly row: Row;
 
@@ -237,6 +250,10 @@ export class Position implements ValueObject {
         }
     }
 
+    toIndex(): number {
+        return Position.toIndex(this)
+    }
+
     sameColumn(include: boolean = false): Position[] {
         if (include) {
             return [...Position.cols[this.column]]
@@ -269,6 +286,6 @@ export class Position implements ValueObject {
     }
 
     toString(): string {
-        return `(${this.row}-${this.column})`
+        return `(${this.row}${this.column})`
     }
 }

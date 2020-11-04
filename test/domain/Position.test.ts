@@ -56,7 +56,7 @@ describe('Position', () => {
     })
 
     it('list all peer positions', () => {
-        expect(Array.from(Position.of(4, 5).peers())).toContainAllValues(
+        expect(Position.peersOf(Position.of(4, 5))).toContainAllValues(
             [
                 // same row
                 Position.of(4, 0),
@@ -85,6 +85,25 @@ describe('Position', () => {
                 Position.of(5, 4),
             ]
         )
+    })
 
+    it('can be converted to an index', () => {
+        expect(Position.toIndex(Position.of(Row.A, Column.One))).toBe(0)
+        expect(Position.toIndex(Position.of(Row.A, Column.Two))).toBe(1)
+        expect(Position.toIndex(Position.of(Row.A, Column.Three))).toBe(2)
+
+        expect(Position.toIndex(Position.of(Row.B, Column.One))).toBe(9)
+        expect(Position.toIndex(Position.of(Row.B, Column.Two))).toBe(10)
+        expect(Position.toIndex(Position.of(Row.B, Column.Three))).toBe(11)
+    })
+
+    it('can be derived from an index', () => {
+        expect(Position.fromIndex(0)).toEqual(Position.of(Row.A, Column.One))
+        expect(Position.fromIndex(1)).toEqual(Position.of(Row.A, Column.Two))
+        expect(Position.fromIndex(2)).toEqual(Position.of(Row.A, Column.Three))
+
+        expect(Position.fromIndex(9)).toEqual(Position.of(Row.B, Column.One))
+        expect(Position.fromIndex(10)).toEqual(Position.of(Row.B, Column.Two))
+        expect(Position.fromIndex(11)).toEqual(Position.of(Row.B, Column.Three))
     })
 })

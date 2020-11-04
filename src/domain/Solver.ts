@@ -11,14 +11,28 @@ export class Solver {
         return Solver.solveH(rules, Constraints.initialize(board))
     }
 
+    private static applyRules(rules: List<Rule>, constraints: Constraints): Either<String, Constraints> {
+        const constraintsAfterRules = rules.reduce((constraint, rule) => {
+            return chain((c: Constraints) => rule.evaluate(c))(constraint)
+        }, right<String, Constraints>(constraints))
+
+        if (isRight(constraintsAfterRules)) {
+            if (constraintsAfterRules.right.equals(constraints)) {
+                return constraintsAfterRules
+            } else {
+                return this.applyRules(rules, constraintsAfterRules.right)
+            }
+        }
+
+        return constraintsAfterRules
+    }
+
     private static solveH(rules: List<Rule>, constraints: Constraints): Either<String, Constraints> {
         if (constraints.isFinished()) {
             return right(constraints)
         } else {
             // Apply all rules
-            const constraintsAfterRules = rules.reduce((constraint, rule) => {
-                return chain((c: Constraints) => rule.evaluate(c))(constraint)
-            }, right<String, Constraints>(constraints))
+            const constraintsAfterRules = this.applyRules(rules, constraints)
 
             // If constraints are still valid
             if (isRight(constraintsAfterRules)) {
@@ -28,11 +42,10 @@ export class Solver {
                     return constraintsAfterRules
                 }
 
-                //
                 const [position, candidates] = constraintsAfterRules.right.candidates()
 
                 // guess randomly
-                for (const candidate of candidates) {
+                for (let candidate of candidates.candidates) {
                     const guess = constraintsAfterRules.right.assign(position, candidate);
                     if (isRight(guess)) {
                         const solveH = this.solveH(rules, guess.right);

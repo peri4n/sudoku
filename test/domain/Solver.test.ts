@@ -1,12 +1,13 @@
 import {Board} from "../../src/domain/Board";
 import {Solver} from "../../src/domain/Solver";
-import {BasicRule, SinglePossibility} from "../../src/domain/Rule";
 import {List} from "immutable";
 import '@relmify/jest-fp-ts';
+import {BasicRule} from "../../src/domain/BasicRule";
+import {SinglePossibilityRule} from "../../src/domain/SinglePossibilityRule";
 
 describe("The Sudoku solver", () => {
 
-    const rules = List.of(new BasicRule, new SinglePossibility());
+    const rules = List.of(new BasicRule, new SinglePossibilityRule());
     // const rules = List.of(new BasicRule);
 
     it('can solve easy problem 1', () => {
