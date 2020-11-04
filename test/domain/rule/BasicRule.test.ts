@@ -1,6 +1,6 @@
-import {Board} from "../../src/domain/Board";
-import {Constraints} from "../../src/domain/Constraints";
-import {BasicRule} from "../../src/domain/BasicRule";
+import {Board} from "../../../src/domain/Board";
+import {Constraints} from "../../../src/domain/Constraints";
+import {BasicRule} from "../../../src/domain/rule/BasicRule";
 import '@relmify/jest-fp-ts';
 
 describe('The basic rule', () => {

@@ -1,17 +1,17 @@
 import {Board} from "./Board";
 import {List} from "immutable";
-import {Rule} from "./Rule";
+import {Rule} from "./rule/Rule";
 import {Constraints} from "./Constraints";
 import {chain, Either, isRight, left, right} from "fp-ts/lib/Either";
 
 
 export class Solver {
 
-    public static solve(board: Board, rules: List<Rule>): Either<String, Constraints> {
-        return Solver.solveH(rules, Constraints.initialize(board))
+    public static solve(board: Board, ...rules: Rule[]): Either<String, Constraints> {
+        return Solver.solveH(Constraints.initialize(board), ...rules)
     }
 
-    private static applyRules(rules: List<Rule>, constraints: Constraints): Either<String, Constraints> {
+    private static applyRules(constraints: Constraints, ...rules: Rule[]): Either<String, Constraints> {
         const constraintsAfterRules = rules.reduce((constraint, rule) => {
             return chain((c: Constraints) => rule.evaluate(c))(constraint)
         }, right<String, Constraints>(constraints))
@@ -20,19 +20,19 @@ export class Solver {
             if (constraintsAfterRules.right.equals(constraints)) {
                 return constraintsAfterRules
             } else {
-                return this.applyRules(rules, constraintsAfterRules.right)
+                return this.applyRules(constraintsAfterRules.right, ...rules)
             }
         }
 
         return constraintsAfterRules
     }
 
-    private static solveH(rules: List<Rule>, constraints: Constraints): Either<String, Constraints> {
+    private static solveH(constraints: Constraints, ...rules: Rule[]): Either<String, Constraints> {
         if (constraints.isFinished()) {
             return right(constraints)
         } else {
             // Apply all rules
-            const constraintsAfterRules = this.applyRules(rules, constraints)
+            const constraintsAfterRules = this.applyRules(constraints, ...rules)
 
             // If constraints are still valid
             if (isRight(constraintsAfterRules)) {
@@ -48,7 +48,7 @@ export class Solver {
                 for (let candidate of candidates.candidates) {
                     const guess = constraintsAfterRules.right.assign(position, candidate);
                     if (isRight(guess)) {
-                        const solveH = this.solveH(rules, guess.right);
+                        const solveH = this.solveH(guess.right, ...rules);
                         if (isRight(solveH)) {
                             return solveH
                         }

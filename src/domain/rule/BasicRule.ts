@@ -1,6 +1,6 @@
-import {Constraints} from "./Constraints";
+import {Constraints} from "../Constraints";
 import {chain, Either, isRight, left, right} from "fp-ts/lib/Either";
-import {Position} from "./Position";
+import {Position} from "../Position";
 import {Rule} from "./Rule";
 
 export class BasicRule implements Rule {

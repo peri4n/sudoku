@@ -2,7 +2,7 @@ import {Board} from "../../src/domain/Board";
 import {Constraints} from "../../src/domain/Constraints";
 import '@relmify/jest-fp-ts';
 import {Column, Position, Row} from "../../src/domain/Position";
-import {BasicRule} from "../../src/domain/BasicRule";
+import {BasicRule} from "../../src/domain/rule/BasicRule";
 
 describe('Constraints', function () {
 

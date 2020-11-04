@@ -1,8 +1,8 @@
-import {Constraints} from "./Constraints";
+import {Constraints} from "../Constraints";
 import {chain, Either, right} from "fp-ts/lib/Either";
 import {Rule} from "./Rule";
-import {Position} from "./Position";
-import {Digit} from "./Square";
+import {Position} from "../Position";
+import {Digit} from "../Square";
 
 export class SinglePossibilityRule implements Rule {
     evaluate(constraints: Constraints): Either<String, Constraints> {

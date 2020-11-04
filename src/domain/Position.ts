@@ -161,21 +161,21 @@ export class Position {
     public static readonly cols = [Position.col1, Position.col2, Position.col3, Position.col4, Position.col5, Position.col6, Position.col7, Position.col8, Position.col9]
 
     /** All squares */
-    private static readonly sTL = [Position.a1, Position.a2, Position.a3, Position.b1, Position.b2, Position.b3, Position.c1, Position.c2, Position.c3]
-    private static readonly sTM = [Position.a4, Position.a5, Position.a6, Position.b4, Position.b5, Position.b6, Position.c4, Position.c5, Position.c6]
-    private static readonly sTR = [Position.a7, Position.a8, Position.a9, Position.b7, Position.b8, Position.b9, Position.c7, Position.c8, Position.c9]
+    public static readonly sTL: ReadonlyArray<Position> = [Position.a1, Position.a2, Position.a3, Position.b1, Position.b2, Position.b3, Position.c1, Position.c2, Position.c3]
+    public static readonly sTM: ReadonlyArray<Position> = [Position.a4, Position.a5, Position.a6, Position.b4, Position.b5, Position.b6, Position.c4, Position.c5, Position.c6]
+    public static readonly sTR: ReadonlyArray<Position> = [Position.a7, Position.a8, Position.a9, Position.b7, Position.b8, Position.b9, Position.c7, Position.c8, Position.c9]
 
-    private static readonly sML = [Position.d1, Position.d2, Position.d3, Position.e1, Position.e2, Position.e3, Position.f1, Position.f2, Position.f3]
-    private static readonly sMM = [Position.d4, Position.d5, Position.d6, Position.e4, Position.e5, Position.e6, Position.f4, Position.f5, Position.f6]
-    private static readonly sMR = [Position.d7, Position.d8, Position.d9, Position.e7, Position.e8, Position.e9, Position.f7, Position.f8, Position.f9]
+    public static readonly sML: ReadonlyArray<Position> = [Position.d1, Position.d2, Position.d3, Position.e1, Position.e2, Position.e3, Position.f1, Position.f2, Position.f3]
+    public static readonly sMM: ReadonlyArray<Position> = [Position.d4, Position.d5, Position.d6, Position.e4, Position.e5, Position.e6, Position.f4, Position.f5, Position.f6]
+    public static readonly sMR: ReadonlyArray<Position> = [Position.d7, Position.d8, Position.d9, Position.e7, Position.e8, Position.e9, Position.f7, Position.f8, Position.f9]
 
-    private static readonly sBL = [Position.g1, Position.g2, Position.g3, Position.h1, Position.h2, Position.h3, Position.i1, Position.i2, Position.i3]
-    private static readonly sBM = [Position.g4, Position.g5, Position.g6, Position.h4, Position.h5, Position.h6, Position.i4, Position.i5, Position.i6]
-    private static readonly sBR = [Position.g7, Position.g8, Position.g9, Position.h7, Position.h8, Position.h9, Position.i7, Position.i8, Position.i9]
+    public static readonly sBL: ReadonlyArray<Position> = [Position.g1, Position.g2, Position.g3, Position.h1, Position.h2, Position.h3, Position.i1, Position.i2, Position.i3]
+    public static readonly sBM: ReadonlyArray<Position> = [Position.g4, Position.g5, Position.g6, Position.h4, Position.h5, Position.h6, Position.i4, Position.i5, Position.i6]
+    public static readonly sBR: ReadonlyArray<Position> = [Position.g7, Position.g8, Position.g9, Position.h7, Position.h8, Position.h9, Position.i7, Position.i8, Position.i9]
 
     public static readonly squares = [Position.sTL, Position.sTM, Position.sTR, Position.sML, Position.sMM, Position.sMR, Position.sBL, Position.sBM, Position.sBR]
 
-    private static readonly squaresHelper = [
+    private static readonly squaresHelper: ReadonlyArray<ReadonlyArray<ReadonlyArray<Position>>> = [
         [Position.sTL, Position.sTM, Position.sTR],
         [Position.sML, Position.sMM, Position.sMR],
         [Position.sBL, Position.sBM, Position.sBR]
@@ -201,11 +201,11 @@ export class Position {
     }
 
     private static memoPears(): Position[][] {
-        return Position.all.map( position => position.peers())
+        return Position.all.map(position => position.peers())
     }
 
     public static toIndex(pos: Position): number {
-        return pos.row  * 9 + pos.column
+        return pos.row * 9 + pos.column
     }
 
     public static fromIndex(index: number): Position {
@@ -264,7 +264,7 @@ export class Position {
         }
     }
 
-    sameSquare(include: boolean = false): Position[] {
+    sameSquare(include: boolean = false): ReadonlyArray<Position> {
         const rowIndex = Math.trunc(this.row / 3)
         const colIndex = Math.trunc(this.column / 3)
         if (include) {
