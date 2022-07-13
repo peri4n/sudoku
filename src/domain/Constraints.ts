@@ -73,6 +73,10 @@ export class Constraints {
             , () => `Removing ${candidate} from position ${position} leaves one cell with no candidates.`)
     }
 
+    isStricterThan(otherConstraints: Constraints): boolean {
+        return this.constraints.every( (candidates, index) => candidates.isStricterThan(otherConstraints.at(Position.fromIndex(index))))
+    }
+
     reverseIndex(positions: ReadonlyArray<Position>): Map<Digit, ReadonlyArray<Position>> {
         const index = new Map<Digit, Array<Position>>()
         positions.forEach(position => {

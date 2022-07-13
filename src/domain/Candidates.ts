@@ -48,6 +48,10 @@ export class Candidates {
         }
     }
 
+    isStricterThan(otherCandidates: Candidates): boolean {
+       return this.candidates.every( candidates => otherCandidates.candidates.includes(candidates) )
+    }
+
     equals(other: any): Boolean {
         if (other instanceof Candidates) {
             return Candidates.arrayMatch(this.candidates, other.candidates)
